@@ -1,0 +1,68 @@
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
+import { DeliveryPoint } from '../types/types';
+import DeliveryPointsList from '../components/DeliveryPointsList';
+import Map from '../components/Map';
+import { Settings } from 'lucide-react';
+
+export default function Home() {
+  const [points, setPoints] = useState<DeliveryPoint[]>([]);
+  const [view, setView] = useState<'list' | 'map'>('list');
+
+  useEffect(() => {
+    fetchPoints();
+  }, []);
+
+  async function fetchPoints() {
+    const { data, error } = await supabase.from('delivery_points').select('*');
+
+    if (error) {
+      console.error('Error fetching points:', error);
+      return;
+    }
+
+    setPoints(data);
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Points de livraison</h1>
+        <a
+          href="/admin/login"
+          className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          <Settings size={20} />
+          Administration
+        </a>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setView('list')}
+            className={`px-4 py-2 rounded ${
+              view === 'list' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            }`}
+          >
+            Liste
+          </button>
+          <button
+            onClick={() => setView('map')}
+            className={`px-4 py-2 rounded ${
+              view === 'map' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            }`}
+          >
+            Carte
+          </button>
+        </div>
+      </div>
+
+      {view === 'list' ? (
+        <DeliveryPointsList points={points} />
+      ) : (
+        <Map points={points} />
+      )}
+    </div>
+  );
+}
