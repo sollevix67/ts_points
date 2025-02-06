@@ -5,16 +5,27 @@ import DeliveryPointsList from '../components/DeliveryPointsList';
 import Map from '../components/Map';
 import { Settings } from 'lucide-react';
 
+const getInitialView = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  return {
+    view: searchParams.get('view') === 'map' ? 'map' : 'list',
+    pointId: searchParams.get('point') || undefined
+  };
+};
+
 export default function Home() {
   const [points, setPoints] = useState<DeliveryPoint[]>([]);
-  const [view, setView] = useState<'list' | 'map'>('list');
+  const [view, setView] = useState<'list' | 'map'>(getInitialView().view);
+  const [selectedPointId, setSelectedPointId] = useState<string | undefined>(getInitialView().pointId);
 
   useEffect(() => {
     fetchPoints();
   }, []);
 
   async function fetchPoints() {
-    const { data, error } = await supabase.from('delivery_points').select('*');
+    const { data, error } = await supabase
+      .from('delivery_points')
+      .select('*');
 
     if (error) {
       console.error('Error fetching points:', error);
@@ -36,7 +47,7 @@ export default function Home() {
           Administration
         </a>
       </div>
-
+      
       <div className="mb-6">
         <div className="flex space-x-4">
           <button
@@ -61,7 +72,7 @@ export default function Home() {
       {view === 'list' ? (
         <DeliveryPointsList points={points} />
       ) : (
-        <Map points={points} />
+        <Map points={points} selectedId={selectedPointId} />
       )}
     </div>
   );

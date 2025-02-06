@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Map, Package } from 'lucide-react';
+import { LogOut, Map, Package, Home } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Props {
@@ -35,6 +35,13 @@ export default function AdminLayout({ children }: Props) {
           >
             <Map className="mr-3" size={20} />
             Carte
+          </a>
+          <a
+            href="/"
+            className="flex items-center px-4 py-3 hover:bg-gray-700 transition-colors text-green-400"
+          >
+            <Home className="mr-3" size={20} />
+            Retour au site
           </a>
           <button
             onClick={handleLogout}

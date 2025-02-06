@@ -12,7 +12,9 @@ export default function AdminMap() {
   }, []);
 
   const fetchPoints = async () => {
-    const { data, error } = await supabase.from('delivery_points').select('*');
+    const { data, error } = await supabase
+      .from('delivery_points')
+      .select('*');
 
     if (error) {
       console.error('Error fetching points:', error);
@@ -25,9 +27,7 @@ export default function AdminMap() {
   return (
     <AdminLayout>
       <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold mb-6">
-          Carte des points de livraison
-        </h1>
+        <h1 className="text-2xl font-bold mb-6">Carte des points de livraison</h1>
         <Map points={points} />
       </div>
     </AdminLayout>

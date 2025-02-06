@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Check, X, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, X, Search, Clock } from 'lucide-react';
 import { DeliveryPoint } from '../types/types';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 export default function DeliveryPointsList({ points }: Props) {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const filteredPoints = points.filter(point => 
     point.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -15,7 +17,7 @@ export default function DeliveryPointsList({ points }: Props) {
   );
 
   const handleRowClick = (id: string) => {
-    window.open(`/point/${id}`, '_blank');
+    navigate(`/point/${id}`);
   };
 
   return (
@@ -36,8 +38,10 @@ export default function DeliveryPointsList({ points }: Props) {
           <thead>
             <tr className="bg-gray-100">
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Code</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Type</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Nom</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Ville</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Horaires</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Actif</th>
             </tr>
           </thead>
@@ -49,8 +53,27 @@ export default function DeliveryPointsList({ points }: Props) {
                 className="border-b hover:bg-gray-50 cursor-pointer transition-colors"
               >
                 <td className="px-6 py-4 text-sm">{point.shop_code}</td>
+                <td className="px-6 py-4 text-sm">
+                  {point.point_type === 'locker' ? 'Casier' : 'Point Relais'}
+                </td>
                 <td className="px-6 py-4 text-sm">{point.name}</td>
                 <td className="px-6 py-4 text-sm">{point.city}</td>
+                <td className="px-6 py-4 text-sm">
+                  {point.opening_timeframe ? (
+                    <button 
+                      className="flex items-center text-blue-500 hover:text-blue-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        alert(point.opening_timeframe);
+                      }}
+                    >
+                      <Clock size={16} className="mr-1" />
+                      Voir les horaires
+                    </button>
+                  ) : (
+                    <span className="text-gray-400">Non renseigné</span>
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   {point.is_active ? (
                     <Check className="text-green-500" size={20} />
